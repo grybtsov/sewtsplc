@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_ProcessSimulation" Id="{d0951dc2-7fe7-4eb0-9a9c-218b7ed9d559}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_ProcessSimulation
+VAR_INPUT
+	bEnable: BOOL;
+	
+	bRotateTable: BOOL;
+	bLinearSliderMoveToPick : BOOL;
+	bLinearSliderMoveToPlace : BOOL;
+	
+	tPartSensorDelay: TIME;
+	tLinearSliderPickPosSensorDelay : TIME;
+	tLinearSliderPlacePosSensorDelay : TIME;
+END_VAR
+VAR_OUTPUT
+	bPartSensorSignal: BOOL;
+	bLinearSliderPickPosSensorSignal: BOOL;
+	bLinearSliderPlacePosSensorSignal: BOOL; 
+END_VAR
+VAR
+	fbPartSensorDelayTmr: TON;
+	fbLinearSliderPickPosSensorDelayTmr: TON;
+	fbLinearSliderPlacePosSensorDelayTmr: TON;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[fbPartSensorDelayTmr(IN:= bEnable AND bRotateTable, 
+					PT:= tPartSensorDelay, 
+					Q=> bPartSensorSignal, ET=> );
+					
+fbLinearSliderPickPosSensorDelayTmr(IN:= bEnable AND bLinearSliderMoveToPick, 
+									PT:= tLinearSliderPickPosSensorDelay, 
+									Q=> bLinearSliderPickPosSensorSignal, ET=> );
+									
+fbLinearSliderPlacePosSensorDelayTmr(IN:= bEnable AND bLinearSliderMoveToPlace, 
+									PT:= tLinearSliderPlacePosSensorDelay, 
+									Q=> bLinearSliderPlacePosSensorSignal, ET=> );]]></ST>
+    </Implementation>
+    <LineIds Name="FB_ProcessSimulation">
+      <LineId Id="9" Count="0" />
+      <LineId Id="25" Count="1" />
+      <LineId Id="33" Count="0" />
+      <LineId Id="23" Count="0" />
+      <LineId Id="27" Count="1" />
+      <LineId Id="34" Count="0" />
+      <LineId Id="24" Count="0" />
+      <LineId Id="29" Count="1" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

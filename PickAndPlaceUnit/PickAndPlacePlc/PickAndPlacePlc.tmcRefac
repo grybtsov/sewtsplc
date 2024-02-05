@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Refactors>
+  <Renames>
+    <RenamedSymbol>
+      <Type guid="74ec56e4-ce97-41cc-a813-656c37416b58">PickAndPlaceUnit</Type>
+      <From>uCyclesCounter</From>
+      <To>uPartsCounter</To>
+    </RenamedSymbol>
+    <RenamedSymbol>
+      <Type guid="74ec56e4-ce97-41cc-a813-656c37416b58">PickAndPlaceUnit</Type>
+      <From>bRotatingTableAlarm</From>
+      <To>bRotatingTableAlarmSignal</To>
+    </RenamedSymbol>
+    <RenamedSymbol>
+      <Type guid="74ec56e4-ce97-41cc-a813-656c37416b58">PickAndPlaceUnit</Type>
+      <From>bLinearSliderAlarm</From>
+      <To>bLinearSliderAlarmSignal</To>
+    </RenamedSymbol>
+  </Renames>
+</Refactors>

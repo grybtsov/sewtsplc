@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <DUT Name="eSmPickAndPlace" Id="{c8cded9f-2b0c-4259-b929-25444d77756f}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+{attribute 'strict'}
+// Pick'n'Place Sequence state machine 
+TYPE eSmPickAndPlace : 
+(
+	STANDSTILL := 0,         // All the devices are disabled, unit is in standstill
+	INIT,                    // Move all the devices to the initial position
+	PICK,                    // The picking sequence
+	PLACE,                   // The placing sequenc
+	ROTATE_TABLE,            // Rotate the table
+	ERROR                    // System is in error state           
+	
+);
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

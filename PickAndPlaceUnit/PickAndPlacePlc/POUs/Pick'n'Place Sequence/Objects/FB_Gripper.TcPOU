@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_Gripper" Id="{29462702-79bb-43c0-a206-6245c5a19425}" SpecialFunc="None">
+    <Declaration><![CDATA[// Gripper without feedback sensors
+FUNCTION_BLOCK FB_Gripper 
+VAR_INPUT
+END_VAR
+VAR_OUTPUT
+	bClose: BOOL;      // Output to close the grippes
+END_VAR
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Method Name="Close" Id="{0f18a4f7-3c67-4762-9921-7c9c5c7e7ee4}">
+      <Declaration><![CDATA[// Close the gripper
+METHOD Close : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[bClose := true; // Set output to close the gripper]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Open" Id="{cf724d07-4268-4eaa-add1-69605a6f40d4}">
+      <Declaration><![CDATA[// Open the gripper
+METHOD Open : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[bClose := false;  // Reset output to close the gripper]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="FB_Gripper">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Gripper.Close">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Gripper.Open">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

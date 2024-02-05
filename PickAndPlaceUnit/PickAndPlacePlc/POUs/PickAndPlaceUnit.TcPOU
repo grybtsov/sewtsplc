@@ -1,0 +1,196 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="PickAndPlaceUnit" Id="{74ec56e4-ce97-41cc-a813-656c37416b58}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM PickAndPlaceUnit
+VAR	
+	// Rotating table motor M1
+    fbRotatingTable: FB_Motor;       	
+	bRotatingTableAlarmSignal: BOOL := TRUE;  					  // NC alarm input from the rotating table motor M1
+	bRotatingTableRun: BOOL;                  					  // Output to run the the rotating table motor M1  
+	bRotatingTableError: BOOL;    			  					  // The rotating table motor M1 is in error state
+	
+	fbRotationMeasuringTimer: TON;            					  // Timer to measure the time period between the sensor S inputs 
+	bMeasureRotation: BOOL;                   					  // Measure the time period between the sensor S inputs for parts 1-3
+	tSegmentRotationTime: TIME;               					  // Duration of the rotation to 60 degrees (for one part)
+	
+	bUseTimerFeedback: BOOL;	              					  // Use sensor signal simulation for parts 4-6 
+	fbSegmentRotationTimer: TON;              					  // Sensor signal simulation timer	
+	
+	// Part sensor S
+	fbPartSensor: FB_Sensor;                  
+	bPartSensorSignal: BOOL;      			                      // Digital input from sensor S
+	
+	// Gripper G
+	fbGripper: FB_Gripper;        
+	bGripperClose: BOOL;          			  					  // Output to close gripper G
+	
+	// Linear slider motor M2
+	fbLinearSlider: FB_LinearMotor;           
+	bLinearSliderAlarmSignal: BOOL := TRUE;   					  // NC alarm input from the linear slider motor M2
+	bLinearSliderMoveToPick: BOOL;            					  // Output to run the linear slider motor M2  
+	bLinearSliderMoveToPlace: BOOL;   	      					  // Output to reverse the linear slider motor M2 
+	bLinearSliderError: BOOL;                 					  // The linear slider motor M2 is in error state
+	
+	// Picking position sensor EP2 of linear slider
+	fbLinearSliderPickPosSensor: FB_Sensor;    
+	bLinearSliderPickPosSignal: BOOL;         					  // Digital input from sensor EP2     
+	
+	// Placing position sensor EP1 of linear slider
+	fbLinearSliderPlacePosSensor: FB_Sensor;   
+	bLinearSliderPlacePosSignal: BOOL;		  					  // Digital input from sensor EP2     
+		
+	// Process flow
+	eStateMachine: eSmPickAndPlace;   							  // State machine for the sequence
+	uPartsCounter: UINT := 0;                   				  // Parts counter	
+	bStartSequence: BOOL;	                    			      // Start the sequence signal
+	fbProcessSimulation: FB_ProcessSimulation;  				  // Simulate all the sensors signals
+END_VAR
+
+VAR CONSTANT
+	SIMULATION_PART_SENSOR_DELAY: TIME:= T#5S;                    // Simulation delay for part sensor S
+	SIMULATION_LINEAR_SLIDER_PICK_POS_SENSOR_DELAY: TIME:= T#3S;  // Simulation delay for picking position sensor EP2 of linear slider
+	SIMULATION_LINEAR_SLIDER_PLACE_POS_SENSOR_DELAY: TIME:= T#3S; // Simulation delay for placing position sensor EP1 of linear slider
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[fbProcessSimulation(bEnable := bStartSequence,
+	bRotateTable := bRotatingTableRun,
+	bLinearSliderMoveToPick := bLinearSliderMoveToPick,
+	bLinearSliderMoveToPlace := bLinearSliderMoveToPlace,
+	tPartSensorDelay := SIMULATION_PART_SENSOR_DELAY,
+	tLinearSliderPickPosSensorDelay := SIMULATION_LINEAR_SLIDER_PICK_POS_SENSOR_DELAY,
+	tLinearSliderPlacePosSensorDelay := SIMULATION_LINEAR_SLIDER_PLACE_POS_SENSOR_DELAY,
+	bPartSensorSignal => bPartSensorSignal,
+	bLinearSliderPickPosSensorSignal => bLinearSliderPickPosSignal,
+	bLinearSliderPlacePosSensorSignal => bLinearSliderPlacePosSignal);
+	
+fbRotatingTable(bAlarmSignal := bRotatingTableAlarmSignal,
+			  bRun => bRotatingTableRun, 
+		      bError => bRotatingTableError);
+	
+fbPartSensor(bSignal := bPartSensorSignal, 
+			 eSignalType := eSensorType.NO);
+			 			 
+fbGripper(bClose => bGripperClose);
+
+fbLinearSlider(bAlarmSignal := bLinearSliderAlarmSignal, 
+				bMoveToPick => bLinearSliderMoveToPick, 
+				bMoveToPlace => bLinearSliderMoveToPlace, 
+				bError => bLinearSliderError);
+				
+fbLinearSliderPickPosSensor(bSignal := bLinearSliderPickPosSignal, 
+			 eSignalType := eSensorType.NO);
+			 
+fbLinearSliderPlacePosSensor(bSignal := bLinearSliderPlacePosSignal, 
+			 eSignalType := eSensorType.NO);
+			 
+fbRotationMeasuringTimer(IN:= bMeasureRotation, PT:= T#49D17H2M47S295MS, Q=> , ET=> );
+fbSegmentRotationTimer(IN:= bUseTimerFeedback, PT:= tSegmentRotationTime, Q=> , ET=> );
+			  
+			  
+CASE eStateMachine OF 
+	eSmPickAndPlace.STANDSTILL:
+	
+		fbRotatingTable.Stop();
+		fbLinearSlider.Stop();
+		fbGripper.Open();
+		
+		IF bStartSequence THEN
+			eStateMachine := eSmPickAndPlace.INIT;
+		END_IF;
+		
+	eSmPickAndPlace.INIT:
+
+		IF fbLinearSliderPlacePosSensor.isOccupied THEN
+			fbLinearSlider.MoveToPlace();
+		ELSIF fbLinearSliderPlacePosSensor.isFree THEN
+			fbLinearSlider.Stop();
+		END_IF;
+				
+		IF fbPartSensor.isOccupied AND fbLinearSliderPlacePosSensor.isFree THEN
+				fbRotatingTable.Run();
+		ELSIF fbPartSensor.isFree THEN
+				fbRotatingTable.Stop();
+				eStateMachine := eSmPickAndPlace.PICK;			
+		END_IF;
+			
+		IF fbRotatingTable.inError OR fbLinearSlider.inError THEN
+			eStateMachine := eSmPickAndPlace.ERROR;
+		END_IF
+		
+	eSmPickAndPlace.PICK:
+	
+		IF fbLinearSliderPickPosSensor.isOccupied THEN
+			fbLinearSlider.MoveToPlace();
+		ELSIF fbLinearSliderPickPosSensor.isFree THEN
+			fbLinearSlider.Stop();
+			fbGripper.Close();
+			eStateMachine := eSmPickAndPlace.PLACE;	
+		END_IF;
+		
+		IF fbLinearSlider.inError THEN
+			eStateMachine :=  eSmPickAndPlace.ERROR;
+		END_IF;
+		
+	eSmPickAndPlace.ROTATE_TABLE:
+		IF uPartsCounter <= 3 THEN			
+			IF fbPartSensor.isOccupied THEN
+				fbRotatingTable.Run();
+				bMeasureRotation := TRUE;
+			ELSIF fbPartSensor.isFree THEN
+				
+				fbRotatingTable.Stop();	
+			
+				tSegmentRotationTime := fbRotationMeasuringTimer.ET;
+				bMeasureRotation := FALSE;
+				
+				eStateMachine := eSmPickAndPlace.PICK;			
+			END_IF;
+		ELSE
+			bUseTimerFeedback := TRUE;
+			fbRotatingTable.Run();
+			IF fbSegmentRotationTimer.Q THEN
+				bUseTimerFeedback := FALSE;
+				fbRotatingTable.Stop();	
+				eStateMachine := eSmPickAndPlace.PICK;
+			END_IF;	
+		END_IF; 
+		
+		IF fbRotatingTable.inError THEN
+			bMeasureRotation := FALSE;			
+			bUseTimerFeedback := FALSE;
+			eStateMachine :=  eSmPickAndPlace.ERROR;
+		END_IF
+		
+	eSmPickAndPlace.PLACE:
+	
+		IF fbLinearSliderPlacePosSensor.isOccupied THEN
+			fbLinearSlider.MoveToPlace();
+		ELSIF fbLinearSliderPlacePosSensor.isFree THEN
+			fbLinearSlider.Stop();
+			fbGripper.Open();
+			uPartsCounter := uPartsCounter + 1;
+			
+			IF uPartsCounter < 6 THEN
+				eStateMachine := eSmPickAndPlace.ROTATE_TABLE;	
+			ELSE
+				uPartsCounter := 0;
+				bStartSequence := FALSE;
+				eStateMachine := eSmPickAndPlace.STANDSTILL;
+			END_IF;
+		END_IF;
+		
+		IF fbLinearSlider.inError THEN
+			eStateMachine :=  eSmPickAndPlace.ERROR;
+		END_IF
+		
+	eSmPickAndPlace.ERROR:
+		bStartSequence := FALSE;
+		eStateMachine := eSmPickAndPlace.STANDSTILL;				
+END_CASE]]></ST>
+    </Implementation>
+    <LineIds Name="PickAndPlaceUnit">
+      <LineId Id="953" Count="133" />
+      <LineId Id="8" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>
