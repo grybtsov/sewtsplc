@@ -15,26 +15,9 @@ END_VAR
     <Implementation>
       <ST><![CDATA[]]></ST>
     </Implementation>
-    <Property Name="isFree" Id="{a8024755-c2f1-4e43-8391-e21a72b9bd04}">
-      <Declaration><![CDATA[// Sensor is not detecting any objects
-PROPERTY isFree : Bool]]></Declaration>
-      <Get Name="Get" Id="{04f7ea43-981d-42da-ab71-e1d789fb8eb7}">
-        <Declaration><![CDATA[VAR
-END_VAR
-]]></Declaration>
-        <Implementation>
-          <ST><![CDATA[CASE eSignalType OF             // Set the sensor is free state accroding to the type 
-	eSensorType.NO:
-		isFree := bSignal;
-	eSensorType.NC:
-		isFree := NOT bSignal;
-END_CASE]]></ST>
-        </Implementation>
-      </Get>
-    </Property>
-    <Property Name="isOccupied" Id="{aed67602-89bc-4e39-b1f7-32748128792c}">
+    <Property Name="isFree" Id="{aed67602-89bc-4e39-b1f7-32748128792c}">
       <Declaration><![CDATA[// Sensor is detecting the object 
-PROPERTY isOccupied : Bool]]></Declaration>
+PROPERTY isFree : Bool]]></Declaration>
       <Get Name="Get" Id="{13c78d76-6384-433d-bdfa-94ca5f356fc5}">
         <Declaration><![CDATA[VAR
 END_VAR
@@ -42,9 +25,26 @@ END_VAR
         <Implementation>
           <ST><![CDATA[CASE eSignalType OF                          // Set the sensor is occupied state accroding to the type 
 	eSensorType.NO: 
-		isOccupied := NOT bSignal;
+		isFree := NOT bSignal;
 	eSensorType.NC:
+		isFree := bSignal;
+END_CASE]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="isOccupied" Id="{a8024755-c2f1-4e43-8391-e21a72b9bd04}">
+      <Declaration><![CDATA[// Sensor is not detecting any objects
+PROPERTY isOccupied : Bool]]></Declaration>
+      <Get Name="Get" Id="{04f7ea43-981d-42da-ab71-e1d789fb8eb7}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[CASE eSignalType OF             // Set the sensor is free state accroding to the type 
+	eSensorType.NO:
 		isOccupied := bSignal;
+	eSensorType.NC:
+		isOccupied := NOT bSignal;
 END_CASE]]></ST>
         </Implementation>
       </Get>

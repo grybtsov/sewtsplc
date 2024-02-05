@@ -16,5 +16,15 @@
       <From>bLinearSliderAlarm</From>
       <To>bLinearSliderAlarmSignal</To>
     </RenamedSymbol>
+    <RenamedType>
+      <Type guid="d0951dc2-7fe7-4eb0-9a9c-218b7ed9d559">FB_PROCESSSIMULATION</Type>
+      <From>FB_ProcessSimulation</From>
+      <To>FB_SensorsSimulation</To>
+    </RenamedType>
+    <RenamedSymbol>
+      <Type guid="74ec56e4-ce97-41cc-a813-656c37416b58">PickAndPlaceUnit</Type>
+      <From>fbProcessSimulation</From>
+      <To>fbSensorsSimulation</To>
+    </RenamedSymbol>
   </Renames>
 </Refactors>

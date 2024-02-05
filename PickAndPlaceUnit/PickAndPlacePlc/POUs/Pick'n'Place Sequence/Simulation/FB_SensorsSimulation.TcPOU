@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
-  <POU Name="FB_ProcessSimulation" Id="{d0951dc2-7fe7-4eb0-9a9c-218b7ed9d559}" SpecialFunc="None">
-    <Declaration><![CDATA[FUNCTION_BLOCK FB_ProcessSimulation
+  <POU Name="FB_SensorsSimulation" Id="{d0951dc2-7fe7-4eb0-9a9c-218b7ed9d559}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_SensorsSimulation
 VAR_INPUT
 	bEnable: BOOL;
 	
@@ -37,7 +37,7 @@ fbLinearSliderPlacePosSensorDelayTmr(IN:= bEnable AND bLinearSliderMoveToPlace,
 									PT:= tLinearSliderPlacePosSensorDelay, 
 									Q=> bLinearSliderPlacePosSensorSignal, ET=> );]]></ST>
     </Implementation>
-    <LineIds Name="FB_ProcessSimulation">
+    <LineIds Name="FB_SensorsSimulation">
       <LineId Id="9" Count="0" />
       <LineId Id="25" Count="1" />
       <LineId Id="33" Count="0" />

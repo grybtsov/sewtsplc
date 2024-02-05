@@ -7,8 +7,8 @@ VAR_INPUT
 	bAlarmSignal: BOOL;        // NC alarm signal from the device
 END_VAR
 VAR_OUTPUT
-	bRun: BOOL;
-	bError: BOOL;
+	bRun: BOOL;                // Output to run the motor
+	bError: BOOL;              // Motor is in error
 END_VAR
 VAR
 END_VAR

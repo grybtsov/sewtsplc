@@ -42,7 +42,7 @@
     <Compile Include="POUs\Pick%27n%27Place Sequence\Objects\FB_Sensor.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="POUs\Pick%27n%27Place Sequence\Simulation\FB_ProcessSimulation.TcPOU">
+    <Compile Include="POUs\Pick%27n%27Place Sequence\Simulation\FB_SensorsSimulation.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="POUs\PickAndPlaceUnit.TcPOU">
