@@ -129,7 +129,7 @@ CASE eStateMachine OF
 
 		
 	eSmPickAndPlace.INIT:									                   // SM: Move the devices to the initial state
-		 
+	 
 		IF fbLinearSliderPlacePosSensor.isFree THEN                            // Move the linear slider to the place position
 			fbLinearSlider.MoveToPlace();
 		ELSIF fbLinearSliderPlacePosSensor.isOccupied THEN
@@ -254,7 +254,7 @@ END_CASE
       <LineId Id="1199" Count="6" />
       <LineId Id="1296" Count="0" />
       <LineId Id="1206" Count="1" />
-      <LineId Id="1298" Count="0" />
+      <LineId Id="1541" Count="0" />
       <LineId Id="1209" Count="7" />
       <LineId Id="1333" Count="2" />
       <LineId Id="1217" Count="1" />
