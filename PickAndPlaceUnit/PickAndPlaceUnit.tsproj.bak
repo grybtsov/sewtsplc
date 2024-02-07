@@ -6,18 +6,23 @@
 				<Cpu/>
 				<Cpu CpuId="1"/>
 			</Settings>
+			<Licenses>
+				<Target>
+					<ManualSelect>{3EBB9639-5FF3-42B6-8847-35C70DC013C8}</ManualSelect>
+				</Target>
+			</Licenses>
 			<Tasks>
 				<Task Id="3" Priority="20" CycleTime="100000" AmsPort="350" AdtTasks="true">
 					<Name>PlcTask</Name>
 				</Task>
 				<Task Id="4" Priority="1" CycleTime="100000" AmsPort="351" Affinity="#x00000001" AdtTasks="true">
-					<Name>TcpExchangeTask</Name>
+					<Name>TcpExchange</Name>
 				</Task>
 			</Tasks>
 		</System>
 		<Plc>
 			<Project GUID="{258848D8-6748-4BAD-9D3B-21681C4D34E7}" Name="PickAndPlacePlc" PrjFilePath="PickAndPlacePlc\PickAndPlacePlc.plcproj" TmcFilePath="PickAndPlacePlc\PickAndPlacePlc.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" SymbolicMapping="true">
-				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcPath="PickAndPlacePlc\PickAndPlacePlc.tmc" TmcHash="{F9056F79-ECD8-4F35-1259-4624689DD136}">
+				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcPath="PickAndPlacePlc\PickAndPlacePlc.tmc" TmcHash="{476046AB-7EFF-4171-0D70-7C1502B35180}">
 					<Name>PickAndPlacePlc Instance</Name>
 					<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
 					<Contexts>

@@ -5,7 +5,7 @@
     <CycleTime>10000</CycleTime>
     <Priority>1</Priority>
     <PouCall>
-      <Name>MAIN</Name>
+      <Name>TcpCameraExchange</Name>
     </PouCall>
     <TaskFBGuid>{a27e268c-df40-44e0-a48e-c01cc9c0c8c1}</TaskFBGuid>
     <Fb_init>{ed9aeb84-65b8-4e18-ab39-c99ed7cf70a8}</Fb_init>

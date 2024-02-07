@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="TcpCameraExchange" Id="{572507de-a44a-4a7e-b7eb-52f2373576ea}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM TcpCameraExchange
+VAR
+	
+
+	bInit: BOOL := TRUE;
+	
+	
+	fbSocketCloseAll: FB_SocketCloseAll; 
+	bSocketCloseError: BOOL;
+	nSocketCloseError: UDINT;
+	
+	fbTcpCameraServer: FB_TCPCameraServer;
+	
+	diWriteData: UDINT;
+	diReadData: UDINT;
+	
+	bSignOfLife: BOOL;
+	fbSignOfLifeTmr: TON;
+	
+
+	bStartServerCommunication: BOOL;
+	bServerConnected: BOOL;
+	bServerBusy: BOOL;
+	bServerError: BOOL;
+	nServerErrorID: UDINT;
+END_VAR
+
+VAR CONSTANT
+	TCP_SIGN_OF_LIFE_PERIOD: TIME := T#500MS;
+	TCP_POOL_TIME: TIME := T#100MS;
+	TCP_SERVER_IP: T_IPv4Addr := '127.0.0.1';
+	TCP_PORT_NUMBER: UDINT := 2010;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[IF bInit THEN 				// Init Step to close all sockets after login PLC with  downlaod
+	fbSocketCloseAll(
+		sSrvNetId:= '', 
+		bExecute:= TRUE, 
+		tTimeout:= T#3S, 
+		bBusy=> , 
+		bError=> bSocketCloseError, 
+		nErrId=> nSocketCloseError);
+	IF NOT (fbSocketCloseAll.bBusy OR fbSocketCloseAll.bError) THEN
+		bInit := FALSE;
+		fbSocketCloseAll(bExecute:= FALSE);
+	END_IF
+ELSE
+		
+	diWriteData := SHL(2147483647,1);
+	
+	fbSignOfLifeTmr(IN:= NOT fbSignOfLifeTmr.Q, PT:= TCP_SIGN_OF_LIFE_PERIOD, Q=> , ET=> );
+	IF fbSignOfLifeTmr.Q THEN
+		bSignOfLife := NOT bSignOfLife;		
+	END_IF
+	
+	diWriteData.0 := bSignOfLife;
+
+	fbTcpCameraServer(
+		sLocalHost:= TCP_SERVER_IP, 											// Server IP Adress
+		nLocalPort:= TCP_PORT_NUMBER, 									// Server port
+		tPoolTime:= TCP_POOL_TIME,
+		bStartCommunication:= bStartServerCommunication, 			// Allow Client-connection or close connection
+		diWriteData:= diWriteData,
+		bConnected => bServerConnected,							// Client connection is valid
+		diReadData => diReadData,
+		bBusy=> bServerBusy, 
+		bError=> bServerError, 
+		nErrorID=> nServerErrorID);
+END_IF]]></ST>
+    </Implementation>
+    <LineIds Name="TcpCameraExchange">
+      <LineId Id="531" Count="33" />
+      <LineId Id="133" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

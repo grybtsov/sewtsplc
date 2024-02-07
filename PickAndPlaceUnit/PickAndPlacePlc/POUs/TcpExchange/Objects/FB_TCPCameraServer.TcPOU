@@ -1,0 +1,187 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_TCPCameraServer" Id="{bd823736-597a-4307-b858-aa0626c8dd73}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_TCPCameraServer
+VAR_INPUT
+	sLocalHost: T_IPv4Addr;
+	nLocalPort: UDINT;
+	tPoolTime: Time;
+	bStartCommunication : BOOL;
+	diWriteData: UDINT;
+END_VAR
+VAR_OUTPUT
+	bConnected: BOOL;
+	diReadData: UDINT;
+	bBusy: BOOL;	
+	bError: BOOL;
+	nErrorID: UDINT;
+END_VAR
+VAR
+	iState: eTcpStateMachine;
+	hListener: T_HSOCKET;
+	hSocket: T_HSOCKET;
+	fbSocketAccept: FB_SocketAccept;
+	fbSocketListen: FB_SocketListen;
+	fbSocketReceive: FB_SocketReceive;
+	fbSocketClose: FB_SocketClose;
+	fbSocketCloseAll: FB_SocketCloseAll;
+	fbSocketSend: FB_SocketSend;
+	bAcceptExecute: BOOL;
+	bSendTrigger: BOOL;
+	fbSendTmr: TON;
+	
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[CASE iState OF
+
+eTcpStateMachine.INIT: // Init State
+	IF bStartCommunication = TRUE THEN
+		fbSocketListen(bExecute := FALSE);
+		fbSocketAccept(bExecute := FALSE);
+		fbSocketCloseAll(bExecute := FALSE);
+		fbSocketClose(bExecute:= FALSE);
+		bBusy := TRUE;
+		iState := eTcpStateMachine.OPEN_SOCKET_LISTENER;
+	ELSE
+		bBusy := FALSE;
+	END_IF
+	
+eTcpStateMachine.OPEN_SOCKET_LISTENER:
+	fbSocketListen(																// Open Listener-Socket
+		sSrvNetId:= '', 														// Local NetID
+		sLocalHost:= sLocalHost, 												// Local IP
+		nLocalPort:= nLocalPort, 												// Local Port
+		bExecute:= TRUE, 
+		tTimeout:= T#4S, 
+		bBusy=> , 
+		bError=> bError, 
+		nErrId=> nErrorID,
+		hListener=> hListener);													// Handle of Listener Socket
+		
+	IF hListener.handle <> 0 THEN
+		//iState := iState + 10;	
+		iState :=eTcpStateMachine.ACCEPT_CLIENT_CONNECTION;
+	ELSIF bError THEN
+		iState := eTcpStateMachine.ERROR_HANDLING;
+	END_IF
+	
+eTcpStateMachine.ACCEPT_CLIENT_CONNECTION: 		
+	fbSocketAccept(																// Accept Client connection
+		sSrvNetId:= '', 		
+		hListener:= hListener, 													// Handle of Listener Socket
+		bExecute:= TRUE, 
+		tTimeout:= T#4S, 
+		bAccepted=> , 
+		bBusy=> , 
+		bError=> bError, 
+		nErrId=> nErrorID,
+		hSocket=> hSocket);														// Connection Handle
+	IF NOT fbSocketAccept.bBusy THEN
+		fbSocketAccept(bExecute:= FALSE);
+	END_IF
+
+	IF bError THEN
+		iState := eTcpStateMachine.ERROR_HANDLING; 
+	ELSIF hSocket.handle <> 0 THEN
+		//iState := iState + 10; 
+		iState := eTcpStateMachine.SEND_DATA;
+		bConnected := TRUE;
+	END_IF
+	
+eTcpStateMachine.RECEIVE_DATA: // Receive Data
+	fbSocketReceive(															// Check cyclically for new client telegrams 
+		sSrvNetId:= '', 
+		hSocket:= hSocket, 
+		cbLen:= SIZEOF(diReadData), 
+		pDest:= ADR(diReadData), 
+		bExecute:= TRUE, 														
+		tTimeout:= T#4S, 
+		bBusy=> , 
+		bError=> bError, 
+		nErrId=> nErrorID,
+		nRecBytes=> );
+		
+	IF NOT fbSocketReceive.bBusy THEN
+		fbSocketReceive(bExecute := FALSE);
+		iState := eTcpStateMachine.SEND_DATA;
+	END_IF
+	IF fbSocketReceive.bError OR(NOT bStartCommunication) THEN					// Close connection when error is occuring or trigger is set
+		iState := eTcpStateMachine.ERROR_HANDLING;
+	END_IF
+
+eTcpStateMachine.SEND_DATA: // Send Data
+	fbSendTmr(IN:= NOT fbSendTmr.Q, PT:= tPoolTime, Q=> , ET=> );	
+	fbSocketSend(																// Send Data to client
+		sSrvNetId:= '', 
+		hSocket:= hSocket, 
+		cbLen:= SIZEOF(diWriteData), 
+		pSrc:= ADR(diWriteData),
+		bExecute:= fbSendTmr.Q, 
+		tTimeout:= T#3S, 
+		bBusy=> , 
+		bError=> bError, 
+		nErrId=> nErrorID);	
+	
+	
+	IF NOT fbSocketSend.bBusy THEN												// Switch back to receiving state after sending
+		iState := eTcpStateMachine.RECEIVE_DATA;
+//	ELSIF fbSocketSend.bError THEN
+//		iState := iState + 5;													// Close connection in case of error 
+	END_IF
+	
+eTcpStateMachine.ERROR_HANDLING:	// Error Handling	
+
+	fbSocketClose(																// Close Listener-Socket
+		sSrvNetId:= '', 
+		hSocket:= hListener, 
+		bExecute:= TRUE, 
+		tTimeout:= T#4S, 
+		bBusy=> , 
+		bError=> bError, 
+		nErrId=> nErrorID);		
+//	IF (NOT fbSocketClose.bBusy) OR fbSocketClose.bError THEN
+//		hListener.handle := 0;
+//		iState := iState + 1;
+//	END_IF
+//41:	
+//	fbSocketClose(bExecute := FALSE);
+//	iState := iState + 1;
+//42:
+	fbSocketClose(																// Close Connection Socket
+		sSrvNetId:= '', 
+		hSocket:= hSocket, 
+		bExecute:= TRUE, 
+		tTimeout:= T#4S, 
+		bBusy=> , 
+		bError=> bError, 
+		nErrId=> nErrorID);
+	IF NOT (fbSocketClose.bBusy) OR fbSocketClose.bError THEN
+		hSocket.handle := 0;	
+		iState := eTcpStateMachine.INIT;
+		bConnected := FALSE;
+	END_IF
+	(*
+45:	// Error Handling	
+
+	fbSocketClose(																// Close Listener-Socket
+		sSrvNetId:= '', 
+		hSocket:= hListener, 
+		bExecute:= TRUE, 
+		tTimeout:= T#4S, 
+		bBusy=> , 
+		bError=> bError, 
+		nErrId=> nErrorID);		
+	IF (NOT fbSocketClose.bBusy) OR fbSocketClose.bError THEN
+		hListener.handle := 0;
+		iState := iStates.INIT;
+	END_IF
+*)
+END_CASE]]></ST>
+    </Implementation>
+    <LineIds Name="FB_TCPCameraServer">
+      <LineId Id="583" Count="143" />
+      <LineId Id="256" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

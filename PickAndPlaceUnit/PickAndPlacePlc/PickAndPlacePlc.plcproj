@@ -18,10 +18,13 @@
     <LibraryReferences>{ddc99722-0191-4b69-b683-49799e7f6a57}</LibraryReferences>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="DUTs\eSensorType.TcDUT">
+    <Compile Include="DUTs\PickAndPlaceUnit\eSensorType.TcDUT">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DUTs\eSmPickAndPlace.TcDUT">
+    <Compile Include="DUTs\PickAndPlaceUnit\eSmPickAndPlace.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUTs\TcpExchange\eTcpStateMachine.TcDUT">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="GVLs\GVL_TcpExchange.TcGVL">
@@ -46,10 +49,16 @@
     <Compile Include="POUs\Pick%27n%27Place Sequence\Objects\FB_Sensor.TcPOU">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="POUs\Pick%27n%27Place Sequence\PickAndPlaceUnit.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="POUs\Pick%27n%27Place Sequence\Simulation\FB_SensorsSimulation.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="POUs\PickAndPlaceUnit.TcPOU">
+    <Compile Include="POUs\TcpExchange\Objects\FB_TCPCameraServer.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\TcpExchange\TcpCameraExchange.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="TcpExchange.TcTTO">
@@ -58,10 +67,14 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="DUTs" />
+    <Folder Include="DUTs\TcpExchange" />
+    <Folder Include="DUTs\PickAndPlaceUnit" />
     <Folder Include="GVLs" />
+    <Folder Include="POUs\TcpExchange" />
     <Folder Include="POUs\Pick%27n%27Place Sequence" />
     <Folder Include="POUs\Pick%27n%27Place Sequence\Simulation" />
     <Folder Include="POUs\Pick%27n%27Place Sequence\Objects" />
+    <Folder Include="POUs\TcpExchange\Objects" />
     <Folder Include="VISUs" />
     <Folder Include="POUs" />
   </ItemGroup>
@@ -73,6 +86,9 @@
     <PlaceholderReference Include="Tc2_System">
       <DefaultResolution>Tc2_System, * (Beckhoff Automation GmbH)</DefaultResolution>
       <Namespace>Tc2_System</Namespace>
+    </PlaceholderReference>
+    <PlaceholderReference Include="Tc2_TcpIp">
+      <DefaultResolution>Tc2_TcpIp, * (Beckhoff Automation GmbH)</DefaultResolution>
     </PlaceholderReference>
     <PlaceholderReference Include="Tc3_Module">
       <DefaultResolution>Tc3_Module, * (Beckhoff Automation GmbH)</DefaultResolution>
