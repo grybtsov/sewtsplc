@@ -2,23 +2,48 @@
 <TcSmProject xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.beckhoff.com/schemas/2012/07/TcSmProject" TcSmVersion="1.0" TcVersion="3.1.4024.55">
 	<Project ProjectGUID="{DB1222DE-6081-4F06-BF5D-670F23CC2C20}" Target64Bit="true" ShowHideConfigurations="#x6">
 		<System>
+			<Settings MaxCpus="4">
+				<Cpu/>
+				<Cpu CpuId="1"/>
+			</Settings>
 			<Tasks>
 				<Task Id="3" Priority="20" CycleTime="100000" AmsPort="350" AdtTasks="true">
 					<Name>PlcTask</Name>
+				</Task>
+				<Task Id="4" Priority="1" CycleTime="100000" AmsPort="351" Affinity="#x00000001" AdtTasks="true">
+					<Name>TcpExchangeTask</Name>
 				</Task>
 			</Tasks>
 		</System>
 		<Plc>
 			<Project GUID="{258848D8-6748-4BAD-9D3B-21681C4D34E7}" Name="PickAndPlacePlc" PrjFilePath="PickAndPlacePlc\PickAndPlacePlc.plcproj" TmcFilePath="PickAndPlacePlc\PickAndPlacePlc.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" SymbolicMapping="true">
-				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2">
+				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcPath="PickAndPlacePlc\PickAndPlacePlc.tmc" TmcHash="{F9056F79-ECD8-4F35-1259-4624689DD136}">
 					<Name>PickAndPlacePlc Instance</Name>
 					<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
 					<Contexts>
 						<Context>
+							<Id>0</Id>
+							<Name>TcpExchange</Name>
+							<ManualConfig>
+								<OTCID>#x02010040</OTCID>
+							</ManualConfig>
+							<Priority>1</Priority>
+							<CycleTime>10000000</CycleTime>
+						</Context>
+						<Context>
 							<Id>1</Id>
-							<Name>Default</Name>
+							<Name>PlcTask</Name>
+							<ManualConfig>
+								<OTCID>#x02010030</OTCID>
+							</ManualConfig>
+							<Priority>20</Priority>
+							<CycleTime>10000000</CycleTime>
 						</Context>
 					</Contexts>
+					<TaskPouOids>
+						<TaskPouOid Prio="1" OTCID="#x08502002"/>
+						<TaskPouOid Prio="20" OTCID="#x08502001"/>
+					</TaskPouOids>
 				</Instance>
 			</Project>
 		</Plc>

@@ -1,51 +1,105 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
   <POU Name="FB_SensorsSimulation" Id="{d0951dc2-7fe7-4eb0-9a9c-218b7ed9d559}" SpecialFunc="None">
-    <Declaration><![CDATA[FUNCTION_BLOCK FB_SensorsSimulation
+    <Declaration><![CDATA[// Sensors signal simulation
+FUNCTION_BLOCK FB_SensorsSimulation
 VAR_INPUT
-	bEnable: BOOL;
+	bEnable: BOOL;								// Enable sensor simulation
+	 
+	bRotateTable: BOOL;							// Signal to run the rotating table motor
+	bLinearSliderMoveToPick : BOOL;     		// Signal to move the slider to the picking position
+	bLinearSliderMoveToPlace : BOOL;    		// Signal to move the slider to the placing position
 	
-	bRotateTable: BOOL;
-	bLinearSliderMoveToPick : BOOL;
-	bLinearSliderMoveToPlace : BOOL;
+	tPartSensorDelay: TIME;						// Delay before the part sensor signal simulation
+	tLinearSliderPickPosSensorDelay : TIME;		// Delay before the linear slider picking position sensor signal simulation
+	tLinearSliderPlacePosSensorDelay : TIME;	// Delay before the linear slider placing position sensor signal simulation
 	
-	tPartSensorDelay: TIME;
-	tLinearSliderPickPosSensorDelay : TIME;
-	tLinearSliderPlacePosSensorDelay : TIME;
+	tStrobeDuration :TIME := T#1S;				// Duration of the simulated sensor signals
 END_VAR
 VAR_OUTPUT
-	bPartSensorSignal: BOOL;
-	bLinearSliderPickPosSensorSignal: BOOL;
-	bLinearSliderPlacePosSensorSignal: BOOL; 
+	bPartSensorSignal: BOOL; 					// Simulated part sensor signal
+	bLinearSliderPickPosSensorSignal: BOOL;		// Simulated linear slider picking position sensor
+	bLinearSliderPlacePosSensorSignal: BOOL;	// Simulated linear slider placing position sensor
 END_VAR
 VAR
-	fbPartSensorDelayTmr: TON;
-	fbLinearSliderPickPosSensorDelayTmr: TON;
-	fbLinearSliderPlacePosSensorDelayTmr: TON;
+	fbPartSensorDelayTmr: TON;					// Part sensor delay timer
+	fbPartSensorStrobeTmr: TP;					// Simulated part sensor signal strobe
+	
+	fbLinearSliderPickPosSensorDelayTmr: TON;	// Linear slider picking position sensor delay timer
+	fbLinearSliderPlacePosSensorDelayTmr: TON;	// Simulated linear slider placing position sensor strobe
+	
+	
+	fbLinearSliderPickPosSensorStrobeTmr: TP;	// Linear slider placing position sensor delay timer
+	fbLinearSliderPlacePosSensorStrobeTmr: TP;	// Simulated linear slider picking position sensor strobe
+	
+				
 END_VAR
 ]]></Declaration>
     <Implementation>
-      <ST><![CDATA[fbPartSensorDelayTmr(IN:= bEnable AND bRotateTable, 
-					PT:= tPartSensorDelay, 
-					Q=> bPartSensorSignal, ET=> );
-					
+      <ST><![CDATA[{region "Part sensor simulation"}
+fbPartSensorDelayTmr(IN:= bEnable AND bRotateTable, 
+					 PT:= tPartSensorDelay, 
+					 Q=> , 
+ 					 ET=> );
+fbPartSensorStrobeTmr(IN:= fbPartSensorDelayTmr.Q, 
+					  PT:= tStrobeDuration, 
+					  Q=> bPartSensorSignal, 
+					  ET=> );
+{endregion}						 
+
+{region "Slider pick position sensor"}					
 fbLinearSliderPickPosSensorDelayTmr(IN:= bEnable AND bLinearSliderMoveToPick, 
 									PT:= tLinearSliderPickPosSensorDelay, 
-									Q=> bLinearSliderPickPosSensorSignal, ET=> );
-									
+									Q=> , 
+									ET=> );
+fbLinearSliderPickPosSensorStrobeTmr(IN:= fbLinearSliderPickPosSensorDelayTmr.Q, 
+									PT:= tStrobeDuration, 
+									Q=> bLinearSliderPickPosSensorSignal, 
+									ET=> );
+{endregion}										 
+
+{region "Slider place position sensor"}										
 fbLinearSliderPlacePosSensorDelayTmr(IN:= bEnable AND bLinearSliderMoveToPlace, 
 									PT:= tLinearSliderPlacePosSensorDelay, 
-									Q=> bLinearSliderPlacePosSensorSignal, ET=> );]]></ST>
+									Q=> , 
+									ET=> );
+fbLinearSliderPlacePosSensorStrobeTmr(IN:= fbLinearSliderPlacePosSensorDelayTmr.Q, 
+									PT:= tStrobeDuration, 
+									Q=> bLinearSliderPlacePosSensorSignal, 
+									ET=> );
+{endregion}	]]></ST>
     </Implementation>
     <LineIds Name="FB_SensorsSimulation">
+      <LineId Id="101" Count="0" />
       <LineId Id="9" Count="0" />
-      <LineId Id="25" Count="1" />
+      <LineId Id="117" Count="0" />
+      <LineId Id="116" Count="0" />
+      <LineId Id="118" Count="0" />
+      <LineId Id="62" Count="0" />
+      <LineId Id="115" Count="0" />
+      <LineId Id="114" Count="0" />
+      <LineId Id="119" Count="0" />
+      <LineId Id="102" Count="1" />
       <LineId Id="33" Count="0" />
       <LineId Id="23" Count="0" />
-      <LineId Id="27" Count="1" />
+      <LineId Id="113" Count="0" />
+      <LineId Id="110" Count="0" />
+      <LineId Id="120" Count="0" />
+      <LineId Id="67" Count="0" />
+      <LineId Id="112" Count="0" />
+      <LineId Id="111" Count="0" />
+      <LineId Id="121" Count="0" />
+      <LineId Id="104" Count="1" />
       <LineId Id="34" Count="0" />
       <LineId Id="24" Count="0" />
-      <LineId Id="29" Count="1" />
+      <LineId Id="109" Count="0" />
+      <LineId Id="108" Count="0" />
+      <LineId Id="122" Count="0" />
+      <LineId Id="70" Count="0" />
+      <LineId Id="107" Count="0" />
+      <LineId Id="69" Count="0" />
+      <LineId Id="123" Count="0" />
+      <LineId Id="106" Count="0" />
     </LineIds>
   </POU>
 </TcPlcObject>

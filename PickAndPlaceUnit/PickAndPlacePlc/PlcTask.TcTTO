@@ -5,9 +5,6 @@
     <CycleTime>10000</CycleTime>
     <Priority>20</Priority>
     <PouCall>
-      <Name>MAIN</Name>
-    </PouCall>
-    <PouCall>
       <Name>PickAndPlaceUnit</Name>
     </PouCall>
     <TaskFBGuid>{8f926056-5521-41b7-a2c6-e21fd9662692}</TaskFBGuid>

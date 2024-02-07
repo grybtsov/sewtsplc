@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectGuid>{1835bce8-a7e4-4e91-9a19-85c0807aee33}</ProjectGuid>
+    <AssemblyName>PickAndPlaceSimulation</AssemblyName>
+    <Name>PickAndPlaceSimulation</Name>
+    <RootNamespace>PickAndPlaceSimulation</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="YT Scope Project.tcscopex">
+      <SubType>Content</SubType>
+    </Content>
+  </ItemGroup>
+</Project>
