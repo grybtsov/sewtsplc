@@ -3,32 +3,32 @@
   <POU Name="FB_TCPCameraServer" Id="{bd823736-597a-4307-b858-aa0626c8dd73}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK FB_TCPCameraServer
 VAR_INPUT
-	sLocalHost: T_IPv4Addr;
-	nLocalPort: UDINT;
-	tPoolTime: Time;
-	bStartCommunication : BOOL;
-	diWriteData: UDINT;
+	sLocalHost: T_IPv4Addr;											// Server IP address
+	nLocalPort: UDINT;												// Server port number
+	tPoolTime: TIME;												// Pool time for data exchange
+	bStartCommunication : BOOL;										// Start the exchange process
+	udiSendData: UDINT;												// Data to send to client
 END_VAR
 VAR_OUTPUT
-	bConnected: BOOL;
-	udiReceivedData: UDINT;
-	bBusy: BOOL;	
+	bConnected: BOOL;												// Client connection is accepted
+	udiReceivedData: UDINT;											// Data received from client
+	bBusy: BOOL;													
 	bError: BOOL;
 	nErrorID: UDINT;
 END_VAR
 VAR
 	iState: eTcpStateMachine;
-	hListener: T_HSOCKET;
-	hSocket: T_HSOCKET;
-	fbSocketAccept: FB_SocketAccept;
-	fbSocketListen: FB_SocketListen;
-	fbSocketReceive: FB_SocketReceive;
-	fbSocketClose: FB_SocketClose;
-	fbSocketCloseAll: FB_SocketCloseAll;
-	fbSocketSend: FB_SocketSend;
-	bAcceptExecute: BOOL;
-	bSendTrigger: BOOL;
-	fbPoolTmr: TON;
+	hListener: T_HSOCKET;                                           // Handler from socket listener
+	hSocket: T_HSOCKET;												// Handler from remote client accept
+	
+	fbSocketListen: FB_SocketListen;								// Open socket listener
+	fbSocketAccept: FB_SocketAccept;								// Accept remote client connection
+	fbSocketSend: FB_SocketSend;									// Send data to socket
+	fbSocketReceive: FB_SocketReceive;								// Receive data to socket
+	fbSocketClose: FB_SocketClose;									// Close socket
+	
+	bSendTrigger: BOOL;												// Cyclical trigger to send data to client
+	fbPoolTmr: TON;													// Timer to produce send command
 	
 END_VAR
 ]]></Declaration>
@@ -101,8 +101,8 @@ END_VAR
 				  
 		fbSocketSend(sSrvNetId:= '', 								// Send data to client with pool period
 					 hSocket:= hSocket, 							// Handle from socket accept
-					 cbLen:= SIZEOF(diWriteData), 
-					 pSrc:= ADR(diWriteData),
+					 cbLen:= SIZEOF(udiSendData), 
+					 pSrc:= ADR(udiSendData),
 					 bExecute:= fbPoolTmr.Q, 
 					 tTimeout:= T#3S, 
 					 bBusy=> , 
@@ -163,15 +163,7 @@ END_VAR
 END_CASE]]></ST>
     </Implementation>
     <LineIds Name="FB_TCPCameraServer">
-      <LineId Id="999" Count="66" />
-      <LineId Id="1067" Count="34" />
-      <LineId Id="1103" Count="3" />
-      <LineId Id="1108" Count="5" />
-      <LineId Id="1121" Count="1" />
-      <LineId Id="1124" Count="5" />
-      <LineId Id="1152" Count="0" />
-      <LineId Id="1130" Count="4" />
-      <LineId Id="1151" Count="0" />
+      <LineId Id="1183" Count="126" />
       <LineId Id="256" Count="0" />
     </LineIds>
   </POU>

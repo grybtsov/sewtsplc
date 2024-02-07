@@ -68,7 +68,7 @@ ELSE
 		nLocalPort:= TCP_PORT_NUMBER, 									// Server port
 		tPoolTime:= TCP_POOL_TIME,
 		bStartCommunication:= bStartServerCommunication, 				// Allow Client-connection or close connection
-		diWriteData:= udiSendData,
+		udiSendData:= udiSendData,
 		bConnected => bServerConnected,									// Client connection is valid
 		udiReceivedData => udiReceivedData,
 		bBusy=> bServerBusy, 
