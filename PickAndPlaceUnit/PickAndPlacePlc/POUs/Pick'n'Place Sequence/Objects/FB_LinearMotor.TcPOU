@@ -1,0 +1,92 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_LinearMotor" Id="{6f182d56-d000-45d3-8927-eedc37f7075e}" SpecialFunc="None">
+    <Declaration><![CDATA[// Bidirectional linear motor
+FUNCTION_BLOCK FB_LinearMotor  
+VAR_INPUT
+	bAlarmSignal: BOOL;        // NC alarm signal from the device
+END_VAR
+VAR_OUTPUT
+	bMoveToPick: BOOL;         // Output for motor to drive forward
+	bMoveToPlace: BOOL;        // Output for motor to drive backward
+	bError: BOOL;              // Motor is in error
+END_VAR
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[IF inError THEN                // Stop the motor if it is in th error state
+	Stop();        
+	bError := TRUE;
+ELSE
+	bError := FALSE;
+END_IF
+]]></ST>
+    </Implementation>
+    <Property Name="inError" Id="{8f2295b2-2df4-42c2-938f-27eb134e2997}">
+      <Declaration><![CDATA[// Motor is in the error state
+PROPERTY inError : Bool ]]></Declaration>
+      <Get Name="Get" Id="{b88da420-2e86-42b1-b6b6-b1b510ba97ab}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[inError := NOT bAlarmSignal; // Motor is in error state when there is no NC alarm signal ]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Method Name="MoveToPick" Id="{ba39bd66-f20f-43ca-a17f-8f0430306b55}">
+      <Declaration><![CDATA[// Move to the pick position
+METHOD MoveToPick : BOOL
+
+VAR_INPUT
+
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[bMoveToPick := TRUE;   // Set output for motor to drive forward
+bMoveToPlace:= FALSE;  // Reset output for motor to drive backward]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MoveToPlace" Id="{5a65e9de-c118-4280-b8a0-9c384f9af79a}">
+      <Declaration><![CDATA[// Move to the place position
+METHOD MoveToPlace : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[bMoveToPick := FALSE;  // Reset output for motor to drive forward
+bMoveToPlace:= TRUE;   // Set output for motor to drive backward]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Stop" Id="{0f166531-81c2-4645-91a9-e231ac44df24}">
+      <Declaration><![CDATA[// Stop the motor 
+METHOD Stop : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[bMoveToPick := FALSE;  // Reset output for motor to drive forward
+bMoveToPlace:= FALSE;  // Reset output for motor to drive backward]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="FB_LinearMotor">
+      <LineId Id="31" Count="5" />
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_LinearMotor.inError.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_LinearMotor.MoveToPick">
+      <LineId Id="28" Count="0" />
+      <LineId Id="16" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_LinearMotor.MoveToPlace">
+      <LineId Id="6" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_LinearMotor.Stop">
+      <LineId Id="7" Count="0" />
+      <LineId Id="6" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_Motor" Id="{f3102ce1-fae7-4431-8264-728e8d939b92}" SpecialFunc="None">
+    <Declaration><![CDATA[// Motor with one direction
+FUNCTION_BLOCK FB_Motor
+VAR_INPUT
+	bAlarmSignal: BOOL;        // NC alarm signal from the device
+END_VAR
+VAR_OUTPUT
+	bRun: BOOL;                // Output to run the motor
+	bError: BOOL;              // Motor is in error
+END_VAR
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[IF inError THEN                // Stop the motor if it is in th error state
+	Stop();
+	bError := TRUE;
+ELSE
+	bError := FALSE;
+END_IF
+]]></ST>
+    </Implementation>
+    <Property Name="inError" Id="{3d652894-fd98-4a1d-8e97-37f9219b5940}">
+      <Declaration><![CDATA[// Motor is in the error state
+PROPERTY inError : Bool]]></Declaration>
+      <Get Name="Get" Id="{f0058e0e-7c3c-401d-b2c5-47887384743d}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[inError := NOT bAlarmSignal;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="isStoped" Id="{b6975c72-b2db-4f16-ae75-d5ea8cc68af0}">
+      <Declaration><![CDATA[PROPERTY isStoped : Bool]]></Declaration>
+      <Get Name="Get" Id="{b09331fe-f9d9-4fc8-99e7-4d367c9dafbd}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[IsStoped := (bRun = FALSE);]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Method Name="Run" Id="{eb5d2897-9226-4b06-a6c6-14e8c4b45c46}">
+      <Declaration><![CDATA[// Run the motor
+METHOD Run : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[bRun := TRUE; // Set output for motor to run]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Stop" Id="{6100c783-cc3d-41b2-86eb-0dcea861185a}">
+      <Declaration><![CDATA[// Stop the motor
+METHOD Stop : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[bRun := FALSE; // Reset output for motor to run]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="FB_Motor">
+      <LineId Id="9" Count="0" />
+      <LineId Id="19" Count="0" />
+      <LineId Id="32" Count="0" />
+      <LineId Id="36" Count="1" />
+      <LineId Id="20" Count="0" />
+      <LineId Id="31" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Motor.inError.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Motor.isStoped.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Motor.Run">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Motor.Stop">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

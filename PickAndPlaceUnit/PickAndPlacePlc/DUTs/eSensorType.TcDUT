@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <DUT Name="eSensorType" Id="{c739d113-6cf4-4eb4-82cd-5e0e9f7a42d1}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+{attribute 'strict'}
+// Sensor type: NO , NC
+TYPE eSensorType :      
+(
+	NO := 0, 			// Normally opened
+	NC       			// Normally closed
+);
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

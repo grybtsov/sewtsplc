@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_Sensor" Id="{692811f0-6506-42e2-94ec-026318027f18}" SpecialFunc="None">
+    <Declaration><![CDATA[// Digital sensor
+FUNCTION_BLOCK FB_Sensor
+VAR_INPUT
+	bSignal: BOOL;                 // Signal from the sensor
+	eSignalType: eSensorType;      // Type of the sensor: NO, NC
+END_VAR
+VAR_OUTPUT
+END_VAR
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Property Name="isFree" Id="{aed67602-89bc-4e39-b1f7-32748128792c}">
+      <Declaration><![CDATA[// Sensor is detecting the object 
+PROPERTY isFree : Bool]]></Declaration>
+      <Get Name="Get" Id="{13c78d76-6384-433d-bdfa-94ca5f356fc5}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[CASE eSignalType OF                          // Set the sensor is occupied state accroding to the type 
+	eSensorType.NO: 
+		isFree := NOT bSignal;
+	eSensorType.NC:
+		isFree := bSignal;
+END_CASE]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="isOccupied" Id="{a8024755-c2f1-4e43-8391-e21a72b9bd04}">
+      <Declaration><![CDATA[// Sensor is not detecting any objects
+PROPERTY isOccupied : Bool]]></Declaration>
+      <Get Name="Get" Id="{04f7ea43-981d-42da-ab71-e1d789fb8eb7}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[CASE eSignalType OF             // Set the sensor is free state accroding to the type 
+	eSensorType.NO:
+		isOccupied := bSignal;
+	eSensorType.NC:
+		isOccupied := NOT bSignal;
+END_CASE]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <LineIds Name="FB_Sensor">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Sensor.isFree.Get">
+      <LineId Id="5" Count="4" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Sensor.isOccupied.Get">
+      <LineId Id="5" Count="4" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>
