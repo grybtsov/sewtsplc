@@ -48,8 +48,6 @@ VAR
 	bStartSequence: BOOL;	                    			      // Start the sequence signal
 	fbSensorsSimulation: FB_SensorsSimulation;  				  // Simulate all the sensors signals
 	
-	Counter :INT := 0;
-	FromExchange: INT := 0;
 END_VAR
 
 VAR CONSTANT
@@ -229,10 +227,7 @@ CASE eStateMachine OF
 		eStateMachine := eSmPickAndPlace.STANDSTILL;						   // Activate STANDSTILL
 END_CASE
 {endregion}
-	 
-	 Counter := Counter + 8;
-	 GVL_TcpExchange.uWriteData_PlcTask := Counter;
-	 FromExchange := GVL_TcpExchange.uReadData_TcpExchangeTask;]]></ST>
+]]></ST>
     </Implementation>
     <LineIds Name="PickAndPlaceUnit">
       <LineId Id="1156" Count="5" />
@@ -280,7 +275,6 @@ END_CASE
       <LineId Id="1291" Count="3" />
       <LineId Id="8" Count="0" />
       <LineId Id="1295" Count="0" />
-      <LineId Id="1402" Count="2" />
       <LineId Id="1406" Count="0" />
     </LineIds>
   </POU>
