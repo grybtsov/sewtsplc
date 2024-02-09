@@ -22,7 +22,7 @@
 		</System>
 		<Plc>
 			<Project GUID="{258848D8-6748-4BAD-9D3B-21681C4D34E7}" Name="PickAndPlacePlc" PrjFilePath="PickAndPlacePlc\PickAndPlacePlc.plcproj" TmcFilePath="PickAndPlacePlc\PickAndPlacePlc.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" SymbolicMapping="true">
-				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcPath="PickAndPlacePlc\PickAndPlacePlc.tmc" TmcHash="{476046AB-7EFF-4171-0D70-7C1502B35180}">
+				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcPath="PickAndPlacePlc\PickAndPlacePlc.tmc" TmcHash="{C828EC2E-EB65-38AA-1D1C-E945B152643C}">
 					<Name>PickAndPlacePlc Instance</Name>
 					<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
 					<Contexts>

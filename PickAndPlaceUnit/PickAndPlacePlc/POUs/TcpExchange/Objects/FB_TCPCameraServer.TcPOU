@@ -40,7 +40,6 @@ END_VAR
 		IF bStartCommunication = TRUE THEN							// If communication was started
 			fbSocketListen(bExecute := FALSE);						// Reinitialize	socket listener FB
 			fbSocketAccept(bExecute := FALSE);						// Reinitialize	remote client connection acceptance FB
-			fbSocketCloseAll(bExecute := FALSE);					// Reinitialize	close all the sockets FB
 			fbSocketClose(bExecute:= FALSE);						// Reinitialize	socket close FB
 			bBusy := TRUE;				
 			iState := eTcpStateMachine.OPEN_SOCKET_LISTENER;		// Activate OPEN_SOCKET_LISTENER
@@ -111,7 +110,11 @@ END_VAR
 	
 		IF NOT fbSocketSend.bBusy THEN						   		// Switch back to receiving state after sending
 			iState := eTcpStateMachine.RECEIVE_DATA;		   		// Close connection in case of error 
-		END_IF		
+		END_IF
+		IF fbSocketSend.bError OR(NOT bStartCommunication) THEN  // Close connection when error is occuring or trigger is set
+			iState := eTcpStateMachine.ERROR_HANDLING;				// Activate ERROR_HANDLING
+		END_IF
+		
 	
 		
 	eTcpStateMachine.RECEIVE_DATA: 									// SM: Receive Data
@@ -163,7 +166,11 @@ END_VAR
 END_CASE]]></ST>
     </Implementation>
     <LineIds Name="FB_TCPCameraServer">
-      <LineId Id="1183" Count="126" />
+      <LineId Id="1183" Count="6" />
+      <LineId Id="1191" Count="70" />
+      <LineId Id="1314" Count="2" />
+      <LineId Id="1313" Count="0" />
+      <LineId Id="1262" Count="47" />
       <LineId Id="256" Count="0" />
     </LineIds>
   </POU>
