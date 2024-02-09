@@ -1,16 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
-  <Task Name="TcpExchange" Id="{60a2fe8e-0900-4422-9f86-395fa4a1b3f7}">
+  <Task Name="TcpExchange" Id="{208a9863-7302-4ea0-a40c-9d9fb66d787c}">
     <!--CycleTime in micro seconds.-->
-    <CycleTime>10000</CycleTime>
+    <CycleTime>1000</CycleTime>
     <Priority>1</Priority>
     <PouCall>
-      <Name>MAIN</Name>
+      <Name>TcpCameraExchange</Name>
     </PouCall>
-    <TaskFBGuid>{a27e268c-df40-44e0-a48e-c01cc9c0c8c1}</TaskFBGuid>
-    <Fb_init>{ed9aeb84-65b8-4e18-ab39-c99ed7cf70a8}</Fb_init>
-    <Fb_exit>{e9a4e7d5-3124-4dbd-ae88-edcdf3104943}</Fb_exit>
-    <CycleUpdate>{1cf2707b-0208-4408-9fac-4169768b3a86}</CycleUpdate>
-    <PostCycleUpdate>{36737e86-aaeb-49af-8659-d90fedb950b4}</PostCycleUpdate>
+    <TaskFBGuid>{9dd6be8d-779a-4d54-998a-fc4e2402667b}</TaskFBGuid>
+    <Fb_init>{5e9cd7a8-75f2-4667-92a1-66b75560b38a}</Fb_init>
+    <Fb_exit>{c731200d-50c3-4a23-9f52-32d8857bf491}</Fb_exit>
+    <CycleUpdate>{94fda629-bfbd-4933-b451-d5472dde1515}</CycleUpdate>
+    <PostCycleUpdate>{7757c2ba-f84d-4af3-872c-4d966c49170c}</PostCycleUpdate>
   </Task>
 </TcPlcObject>

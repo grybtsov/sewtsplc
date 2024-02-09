@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <DUT Name="eTcpStateMachine" Id="{378cbe92-50b0-464c-a28a-75a3d785a0a9}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+{attribute 'strict'}
+TYPE eTcpStateMachine :
+(
+	INIT := 0,
+	OPEN_SOCKET_LISTENER,
+	ACCEPT_CLIENT_CONNECTION,
+	RECEIVE_DATA,
+	SEND_DATA,
+	ERROR_HANDLING
+	
+	
+);
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

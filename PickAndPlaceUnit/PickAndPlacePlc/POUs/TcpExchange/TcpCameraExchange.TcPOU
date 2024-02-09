@@ -1,0 +1,95 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="TcpCameraExchange" Id="{572507de-a44a-4a7e-b7eb-52f2373576ea}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM TcpCameraExchange
+VAR
+	bInit: BOOL := TRUE;
+	
+	fbSocketCloseAll: FB_SocketCloseAll;                                // FB to close all sockets after login PLC with  download
+	bSocketCloseError: BOOL;											
+	nSocketCloseError: UDINT;
+	
+	fbTcpCameraServer: FB_TCPCameraServer;								// TCP server for camera data exchange
+
+	bSignOfLife: BOOL;													// Send data status bit which changes every 500 ms
+	fbSignOfLifeTmr: TON;												// Timer to change send data status bit
+
+	udiValueToSend: UDINT;                                              // Value for camera
+	udiSendData: UDINT;													// Data for camera to send with sign of life bit
+	udiReceivedData: UDINT;												// Data from camera
+	
+
+	
+	bStartServerCommunication: BOOL;									//
+	bServerConnected: BOOL;
+	bServerBusy: BOOL;
+	bServerError: BOOL;
+	nServerErrorID: UDINT;
+END_VAR
+
+VAR CONSTANT
+	TCP_SIGN_OF_LIFE_PERIOD: TIME := T#500MS;
+	TCP_POOL_TIME: TIME := T#100MS;
+	TCP_SERVER_IP: T_IPv4Addr := '127.0.0.1';
+	TCP_PORT_NUMBER: UDINT := 2010;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+IF bInit THEN 	  												         // Close all sockets after login PLC with  download
+	fbSocketCloseAll(
+		sSrvNetId:= '', 
+		bExecute:= TRUE, 
+		tTimeout:= T#3S, 
+		bBusy=> , 
+		bError=> bSocketCloseError, 
+		nErrId=> nSocketCloseError);
+	IF NOT (fbSocketCloseAll.bBusy OR fbSocketCloseAll.bError) THEN
+		bInit := FALSE;
+		fbSocketCloseAll(bExecute:= FALSE);
+	END_IF
+ELSE		
+	udiSendData := SHL(udiValueToSend,1);                               // Set value to send
+	
+	{region 'Adding sign of life bit to the data'}						// Add sign of life bit
+	fbSignOfLifeTmr(IN:= NOT fbSignOfLifeTmr.Q, 
+					PT:= TCP_SIGN_OF_LIFE_PERIOD, 
+					Q=> , 
+					ET=> );
+	IF fbSignOfLifeTmr.Q THEN
+		bSignOfLife := NOT bSignOfLife;		
+	END_IF;	
+	udiSendData.0 := bSignOfLife;	 
+	{endregion}
+	
+	{region 'TCP server fb call'}										//
+	fbTcpCameraServer(
+		sLocalHost:= TCP_SERVER_IP, 									// Server IP Adress
+		nLocalPort:= TCP_PORT_NUMBER, 									// Server port
+		tPoolTime:= TCP_POOL_TIME,
+		bStartCommunication:= bStartServerCommunication, 				// Allow Client-connection or close connection
+		udiSendData:= udiSendData,
+		bConnected => bServerConnected,									// Client connection is valid
+		udiReceivedData => udiReceivedData,
+		bBusy=> bServerBusy, 
+		bError=> bServerError, 
+		nErrorID=> nServerErrorID);
+END_IF]]></ST>
+    </Implementation>
+    <LineIds Name="TcpCameraExchange">
+      <LineId Id="731" Count="0" />
+      <LineId Id="692" Count="12" />
+      <LineId Id="706" Count="1" />
+      <LineId Id="738" Count="0" />
+      <LineId Id="708" Count="0" />
+      <LineId Id="734" Count="2" />
+      <LineId Id="709" Count="2" />
+      <LineId Id="740" Count="0" />
+      <LineId Id="739" Count="0" />
+      <LineId Id="737" Count="0" />
+      <LineId Id="713" Count="0" />
+      <LineId Id="715" Count="10" />
+      <LineId Id="133" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>
